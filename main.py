@@ -1,3 +1,4 @@
+from recon.params import extract_params
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from colorama import Fore,init
 from recon.subdomains import get_subdomains
@@ -35,6 +36,9 @@ def main():
 
     interesting_urls = filter_urls(urls)
     print(Fore.GREEN + f"[+] FOUND {len(interesting_urls)} INTERESTING URLS")
+
+    interesting_params = extract_params(interesting_urls)
+    print(Fore.GREEN + f" FOUND {len(interesting_params)} INTERESTING PARAMETERS")
 
     with open(
         "output/interesting_urls.txt",
@@ -83,6 +87,8 @@ def main():
     end = time.time()
     print(
         Fore.CYAN + f"\n[+] COMPLETED IN {end - start:.2f} SECONDS")
+    
+    
 
     with open(
             "output/live_urls.txt",
@@ -91,7 +97,13 @@ def main():
             for url in live_urls:
                 f.write(url + "\n")
 
-    
+    with open(
+        "output/interesting_params.txt",
+        "w"
+        ) as f:
+        for url in interesting_params:
+            f.write(url + "\n")
+     
 
 if __name__ == "__main__": 
 
@@ -102,3 +114,4 @@ if __name__ == "__main__":
 
 
 
+  
