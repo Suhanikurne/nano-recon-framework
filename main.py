@@ -1,3 +1,4 @@
+from recon.prioritize import prioritize_params
 from recon.params import extract_params
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from colorama import Fore,init
@@ -39,6 +40,9 @@ def main():
 
     interesting_params = extract_params(interesting_urls)
     print(Fore.GREEN + f" FOUND {len(interesting_params)} INTERESTING PARAMETERS")
+
+    risky_params = prioritize_params(interesting_params)
+    print(Fore.RED + f"FOUND {len(risky_params)} RISKY PARAMETERS")
 
     with open(
         "output/interesting_urls.txt",
@@ -103,7 +107,13 @@ def main():
         ) as f:
         for url in interesting_params:
             f.write(url + "\n")
-     
+
+    with open(
+        "output/risky_params.txt",
+        "w"
+        ) as f:
+        for url in risky_params:
+            f.write(url + "\n")
 
 if __name__ == "__main__": 
 
