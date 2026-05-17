@@ -1,3 +1,4 @@
+import json
 from recon.prioritize import prioritize_params
 from recon.params import extract_params
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -50,10 +51,12 @@ def main():
     ) as f:
         for url in interesting_urls:
             f.write(url + "\n")
-   
+    
+
     print(Fore.CYAN + "[+] FINDING INTERESTING STATUS CODE")
     live_urls =  []
-    
+    results = []    
+
     with ThreadPoolExecutor(max_workers=50) as executor:
         future_map ={
             executor.submit(check_status, url): url
@@ -65,6 +68,8 @@ def main():
                 result = future.result()
                 if not result:
                     continue
+                result["risky"] =  result["url"] in risky_params
+                results.append(result)
                 interesting_status = [200,301,302,401,403,500]
                 if result["status"] not in interesting_status:
                     continue        
@@ -114,6 +119,12 @@ def main():
         ) as f:
         for url in risky_params:
             f.write(url + "\n")
+    
+    with open(
+        "output/results.json",
+        "w"
+        ) as f:
+            json.dump(results , f ,indent=4)
 
 if __name__ == "__main__": 
 
